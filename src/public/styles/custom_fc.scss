@@ -7,10 +7,24 @@
 @import 'colors';
 /* stylelint-disable */
 
+/**
+ * When an event is selected in Kin, any "selection" made via FC will be
+ * discarded, this gives us the ability to unselect an event (in Kin) by
+ * clicking on any empty spot of the current view.
+ *
+ * Instead of disabling FullCalendar's selection when an event is selected
+ * (which requires to edit an option, triggering a complete redraw of the
+ * current FC view), we simply hide the FC's highlights nodes to not distract
+ * the user into thinking he's actually making a selection.
+ */
+.hide-highlight .fc-highlight {
+    display: none;
+}
+
 /*!
- * FullCalendar v3.0.1 Stylesheet
- * Docs & License: http://fullcalendar.io/
- * (c) 2016 Adam Shaw
+ * FullCalendar v3.3.0 Stylesheet
+ * Docs & License: https://fullcalendar.io/
+ * (c) 2017 Adam Shaw
  */
 
 
@@ -58,7 +72,7 @@ body .fc { /* extra precedence to overcome jqui */
 	color: #666;
 }
 
-.fc-unthemed .fc-today {
+.fc-unthemed td.fc-today {
 	color: #2789E4;
 	background: #F2F8FE;
 }
@@ -81,6 +95,15 @@ body .fc { /* extra precedence to overcome jqui */
 .fc-nonbusiness { /* default look for non-business-hours areas */
 	/* will inherit .fc-bgevent's styles */
 	background: #d7d7d7;
+}
+
+.fc-unthemed .fc-disabled-day {
+	background: #d7d7d7;
+	opacity: .3;
+}
+
+.ui-widget .fc-disabled-day { /* themed */
+	background-image: none;
 }
 
 
@@ -198,7 +221,7 @@ hr.fc-divider {
 
 }
 .fc .fc-agendaWeek-view th,
-.fc .fc-agendaWeek-view td,{
+.fc .fc-agendaWeek-view td {
     &:first-child {
         border-width: 0rem;
     }
@@ -646,6 +669,14 @@ a.fc-more:hover {
     height: 2.5rem;
 }
 
+.fc-toolbar.fc-header-toolbar {
+	margin-bottom: 1em;
+}
+
+.fc-toolbar.fc-footer-toolbar {
+	margin-top: 1em;
+}
+
 .fc-toolbar .fc-left {
 	float: left;
 }
@@ -711,6 +742,10 @@ a.fc-more:hover {
 			font-size: 0.76rem;
 		}
 
+        .fc-time {
+            float: right;
+        }
+
         &.show-animation {
             opacity: 0;
             transform: scale(1.1);
@@ -735,11 +770,11 @@ a.fc-more:hover {
     &.fc-agendaWeek-view {
 		.fc-event {
             font-size: 0.8rem;
-            box-shadow: 0 0 11px rgba(0, 0, 0, 0.15);
         }
 
         .fc-title {
             font-weight: normal;
+            font-size: 0.75rem;
         }
 
         &.show-animation {
@@ -794,7 +829,7 @@ a.fc-more:hover {
 
     .fc-event {
         padding: 0.15rem;
-        border-width: 0 0 0 3px;
+        border-width: 0 0 0 2px;
 
         &.striped {
             background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.25) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.25) 75%, transparent 75%, transparent);
@@ -812,9 +847,7 @@ a.fc-more:hover {
         .fc-time {
             position: relative;
             z-index: 10;
-            float: right;
             background: inherit;
-            padding: 0 0.2rem;
         }
 
         .fc-content {
@@ -1105,6 +1138,9 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event {
 	overflow: hidden; /* don't let the bg flow over rounded corners */
+    padding-bottom: 0;
+    padding-top: 0;
+    margin-bottom: 1px;
 }
 
 .fc-time-grid-event.fc-selected {
@@ -1143,6 +1179,10 @@ be a descendant of the grid when it is being dragged.
 	/* put the time and title on the same line */
 	display: inline-block;
 	vertical-align: top;
+}
+
+.fc-time-grid-event.fc-short .fc-time::after {
+    content: "\00a0";
 }
 
 .fc-time-grid-event.fc-short .fc-time span {

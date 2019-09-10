@@ -4,22 +4,21 @@
  * Apache 2.0 Licensed
  */
 
+import classnames from "classnames";
+import { connect } from "react-redux";
+import PropTypes from 'prop-types';
+import React from "react";
+import _ from "lodash";
 
-import classnames from 'classnames';
-import { connect } from 'react-redux';
-import React from 'react';
-import _ from 'lodash';
-
-import { color_prop_type, event_prop_type, layer_prop_type } from '../../../prop_types';
-import { fetch_error } from '../../../utils';
-import { async_save_event } from '../../../actions/events';
-import AttendeesRow from './attendees_row';
-import ColorPicker from './color_picker';
-import DatesRow from './dates_row';
-import DescriptionRow from './description_row';
-import LinkRow from './link_row';
-import LocationRow from './location_row';
-
+import { color_prop_type, event_prop_type, layer_prop_type } from "../../../prop_types";
+import { fetch_error } from "../../../utils";
+import { async_save_event } from "../../../actions/events";
+import AttendeesRow from "./attendees_row";
+import ColorPicker from "./color_picker";
+import DatesRow from "./dates_row";
+import DescriptionRow from "./description_row";
+import LinkRow from "./link_row";
+import LocationRow from "./location_row";
 
 class ReadOnlyEventTooltip extends React.Component {
     constructor() {
@@ -32,19 +31,16 @@ class ReadOnlyEventTooltip extends React.Component {
 
     delete_event() {
         if (!_.isNull(this.props.id)) {
-            $('#event-deletion-modal').data('event-id', this.props.id).foundation('open');
+            $("#event-deletion-modal").data("event-id", this.props.id).foundation("open");
         }
     }
 
     double_click_handler(event) {
-        const $header = $(event.target).closest('.title-header');
-        if ($header.length > 0) {
-            this.props.toggle_edit_mode(event);
-        }
+        this.props.toggle_edit_mode(event);
     }
 
     save_rsvp(response_status) {
-        const attendees = _.get(this.props.event, 'attendees', []);
+        const attendees = _.get(this.props.event, "attendees", []);
         const self = _.find(attendees, { self: true });
         if (_.isUndefined(self)) {
             attendees.unshift({
@@ -54,7 +50,7 @@ class ReadOnlyEventTooltip extends React.Component {
             self.response_status = response_status;
         }
         const event_patch = {
-            attendees,
+            attendees
         };
         this.props.dispatch(async_save_event(this.props.event.id, event_patch)).catch(fetch_error);
     }
@@ -62,30 +58,25 @@ class ReadOnlyEventTooltip extends React.Component {
     select_color(color) {
         const color_id = _.findKey(this.props.colors, { background: color });
         const event_patch = { color_id };
-        this.props
-            .dispatch(async_save_event(this.props.event.id, event_patch))
-            .catch(fetch_error);
+        this.props.dispatch(async_save_event(this.props.event.id, event_patch)).catch(fetch_error);
     }
 
     _render_header() {
-        const title = _.get(this.props.event, 'title', '');
+        const title = _.get(this.props.event, "title", "");
         const empty_title = _.isEmpty(title);
-        const layer_color = _.get(this.props.layer, 'color', 'transparent');
-        const picker_color = _.get(this.props.event, 'color', layer_color);
+        const layer_color = _.get(this.props.layer, "color", "transparent");
+        const picker_color = _.get(this.props.event, "color", layer_color);
         const header_style = {
-            borderBottom: `3px solid ${layer_color}`,
+            borderBottom: `3px solid ${layer_color}`
         };
-        const header_classes = classnames(
-            'constrained',
-            {
-                'empty-title': empty_title
-            }
-        );
-        const formatted_title = empty_title ? 'No Event Title' : title;
+        const header_classes = classnames("constrained", {
+            "empty-title": empty_title
+        });
+        const formatted_title = empty_title ? "No Event Title" : title;
 
         if (!_.isEmpty(this.props.colors)) {
             const default_color = {
-                background: picker_color,
+                background: picker_color
             };
             return (
                 <header style={header_style} className="title-header">
@@ -113,13 +104,28 @@ class ReadOnlyEventTooltip extends React.Component {
     }
 
     _render_footer() {
-        if (_.get(this.props.event, 'kind', '') === 'event#invitation') {
+        if (_.get(this.props.event, "kind", "") === "event#invitation") {
             return (
                 <footer className="text-center">
                     <div className="button-group tiny">
-                        <button className="secondary button" onClick={_.partial(this.save_rsvp, 'accepted')}>Going</button>
-                        <button className="secondary button" onClick={_.partial(this.save_rsvp, 'tentative')}>Maybe</button>
-                        <button className="secondary button" onClick={_.partial(this.save_rsvp, 'declined')}>Decline</button>
+                        <button
+                          className="secondary button"
+                          onClick={_.partial(this.save_rsvp, "accepted")}
+                        >
+                            Going
+                        </button>
+                        <button
+                          className="secondary button"
+                          onClick={_.partial(this.save_rsvp, "tentative")}
+                        >
+                            Maybe
+                        </button>
+                        <button
+                          className="secondary button"
+                          onClick={_.partial(this.save_rsvp, "declined")}
+                        >
+                            Decline
+                        </button>
                     </div>
                 </footer>
             );
@@ -139,26 +145,16 @@ class ReadOnlyEventTooltip extends React.Component {
     }
 
     _render_edit_buttons() {
-        const edit_button = (
-            _.get(this.props.layer, 'acl.edit', false) ? (
-                <button
-                  onClick={this.props.toggle_edit_mode}
-                  className="secondary button small"
-                >
-                    Edit
-                </button>
-            ) : null
-        );
-        const delete_button = (
-            _.get(this.props.layer, 'acl.delete', false) ? (
-                <button
-                  onClick={this.delete_event}
-                  className="alert button small float-right"
-                >
-                    Delete
-                </button>
-            ) : null
-        );
+        const edit_button = _.get(this.props.layer, "acl.edit", false)
+            ? (<button onClick={this.props.toggle_edit_mode} className="secondary button small">
+                  Edit
+              </button>)
+            : null;
+        const delete_button = _.get(this.props.layer, "acl.delete", false)
+            ? (<button onClick={this.delete_event} className="alert button small float-right">
+                  Delete
+              </button>)
+            : null;
 
         if (!_.isNull(edit_button) || !_.isNull(delete_button)) {
             return (
@@ -177,14 +173,14 @@ class ReadOnlyEventTooltip extends React.Component {
                 {this._render_header()}
 
                 <DatesRow
-                  start={_.get(this.props.event, 'start')}
-                  end={_.get(this.props.event, 'end')}
-                  all_day={_.get(this.props.event, 'allDay', false)}
+                  start={_.get(this.props.event, "start")}
+                  end={_.get(this.props.event, "end")}
+                  all_day={_.get(this.props.event, "allDay", false)}
                 />
-                <LocationRow location={_.get(this.props.event, 'location')} />
-                <AttendeesRow attendees={_.get(this.props.event, 'attendees')} />
-                <DescriptionRow description={_.get(this.props.event, 'description')} />
-                <LinkRow link={_.get(this.props.event, 'link')} id={this.props.id} />
+                <LocationRow location={_.get(this.props.event, "location")} />
+                <AttendeesRow attendees={_.get(this.props.event, "attendees")} />
+                <DescriptionRow description={_.get(this.props.event, "description")} />
+                <LinkRow link={_.get(this.props.event, "link")} id={this.props.id} />
 
                 {this._render_footer()}
             </div>
@@ -194,13 +190,12 @@ class ReadOnlyEventTooltip extends React.Component {
 
 ReadOnlyEventTooltip.propTypes = {
     event: event_prop_type,
-    id: React.PropTypes.string,
-    toggle_edit_mode: React.PropTypes.func,
-    dispatch: React.PropTypes.func,
+    id: PropTypes.string,
+    toggle_edit_mode: PropTypes.func,
+    dispatch: PropTypes.func,
     layer: layer_prop_type,
-    colors: React.PropTypes.objectOf(color_prop_type),
+    colors: PropTypes.objectOf(color_prop_type)
 };
-
 
 const ReadOnlyEventTooltipContainer = connect()(ReadOnlyEventTooltip);
 export default ReadOnlyEventTooltipContainer;

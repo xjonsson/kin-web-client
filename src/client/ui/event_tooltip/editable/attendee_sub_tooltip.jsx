@@ -1,27 +1,31 @@
+import PropTypes from 'prop-types';
 /*!
  * kin
  * Copyright(c) 2016-2017 Benoit Person
  * Apache 2.0 Licensed
  */
 
+import React from "react";
+import _ from "lodash";
 
-import React from 'react';
-import _ from 'lodash';
-
-import { attendee_prop_type } from '../../../prop_types';
+import { attendee_prop_type } from "../../../prop_types";
 import {
-    api_url, fetch_check, fetch_options, split_merged_id,
-
-    ATTENDEE_BG_COLORS, hash_code, rsvp_icons,
-} from '../../../utils';
-import DetailsSubTooltip from './details_sub_tooltip';
-
+    api_url,
+    fetch_check,
+    fetch_check_simple_status,
+    fetch_options,
+    split_merged_id,
+    ATTENDEE_BG_COLORS,
+    hash_code,
+    rsvp_icons
+} from "../../../utils";
+import DetailsSubTooltip from "./details_sub_tooltip";
 
 export default class AttendeeSubTooltip extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            results: [],
+            results: []
         };
 
         this.autocomplete = this.autocomplete.bind(this);
@@ -41,7 +45,7 @@ export default class AttendeeSubTooltip extends React.Component {
             <div className="autocompletor-results">
                 <table>
                     <tbody>
-                        {_.map(this.state.results, (contact) => {
+                        {_.map(this.state.results, contact => {
                             return (
                                 <tr
                                   key={contact.id}
@@ -69,12 +73,15 @@ export default class AttendeeSubTooltip extends React.Component {
         const found = _.find(this.props.attendees, { email });
         if (_.isUndefined(found)) {
             this.props.on_change({
-                attendees: [{
-                    email,
-                    response_status: 'needs_action',
-                }, ...this.props.attendees],
+                attendees: [
+                    {
+                        email,
+                        response_status: "needs_action"
+                    },
+                    ...this.props.attendees
+                ]
             });
-            $(this.event_attendee_input).val('');
+            $(this.event_attendee_input).val("");
             this.clean_autocomplete_results();
         }
     }
@@ -92,17 +99,15 @@ export default class AttendeeSubTooltip extends React.Component {
             this.clean_autocomplete_results();
         } else {
             // TODO: do we have layer_id?
-            const [source_id, ] = split_merged_id(this.props.layer_id); // eslint-disable-line array-bracket-spacing
+            const [source_id] = split_merged_id(this.props.layer_id); // eslint-disable-line array-bracket-spacing
             const input = this.new_attendee_value;
-            const url = api_url(
-                `/sources/${escape(source_id)}/contacts`,
-                { input }
-            );
+            const url = api_url(`/sources/${escape(source_id)}/contacts`, { input });
             fetch(url, fetch_options())
-                .then(_.partial(fetch_check, {}))
-                .then((json_res) => {
+                .then(fetch_check)
+                .catch(fetch_check_simple_status)
+                .then(json_res => {
                     this.setState({
-                        results: _.get(json_res, 'contacts', []),
+                        results: _.get(json_res, "contacts", [])
                     });
                 });
         }
@@ -110,19 +115,19 @@ export default class AttendeeSubTooltip extends React.Component {
 
     clean_autocomplete_results() {
         this.setState({
-            results: [],
+            results: []
         });
     }
 
     select_contact(event) {
-        const contact_email = $(event.target).closest('tr').data('value');
+        const contact_email = $(event.target).closest("tr").data("value");
         this._try_inviting_attendee(contact_email);
     }
 
     delete_attendee(event) {
-        const email = $(event.target).closest('tr[data-email]').data('email');
+        const email = $(event.target).closest("tr[data-email]").data("email");
         this.props.on_change({
-            attendees: _.differenceBy(this.props.attendees, [{ email }], 'email'),
+            attendees: _.differenceBy(this.props.attendees, [{ email }], "email")
         });
     }
 
@@ -134,15 +139,9 @@ export default class AttendeeSubTooltip extends React.Component {
 
     render() {
         return (
-            <DetailsSubTooltip
-              title="People"
-              toggle_subtooltip={this.props.toggle_subtooltip}
-            >
+            <DetailsSubTooltip title="People" toggle_subtooltip={this.props.toggle_subtooltip}>
                 <div className="attendee-subtooltip">
-                    <form
-                      onBlur={this.clean_autocomplete_results}
-                      onSubmit={this.invite_attendee}
-                    >
+                    <form onBlur={this.clean_autocomplete_results} onSubmit={this.invite_attendee}>
                         <button type="submit" className="secondary button small float-right">
                             Invite
                         </button>
@@ -153,7 +152,9 @@ export default class AttendeeSubTooltip extends React.Component {
                               placeholder="Email"
                               onChange={this.debounced_autocomplete}
                               autoFocus
-                              ref={(ref) => { this.event_attendee_input = ref; }}
+                              ref={ref => {
+                                  this.event_attendee_input = ref;
+                              }}
                             />
                             {this._render_results()}
                         </label>
@@ -172,15 +173,14 @@ export default class AttendeeSubTooltip extends React.Component {
 }
 
 AttendeeSubTooltip.propTypes = {
-    attendees: React.PropTypes.arrayOf(attendee_prop_type),
-    layer_id: React.PropTypes.string,
-    on_change: React.PropTypes.func,
-    toggle_subtooltip: React.PropTypes.func,
+    attendees: PropTypes.arrayOf(attendee_prop_type),
+    layer_id: PropTypes.string,
+    on_change: PropTypes.func,
+    toggle_subtooltip: PropTypes.func
 };
 
-
 // TODO: should definitely be shared with read-only's AttendeesRow
-const AttendeeCell = (props) => {
+const AttendeeCell = props => {
     const email_hash = hash_code(props.attendee.email);
     const color = ATTENDEE_BG_COLORS[email_hash % ATTENDEE_BG_COLORS.length];
     return (
@@ -204,11 +204,10 @@ const AttendeeCell = (props) => {
     );
 };
 AttendeeCell.propTypes = {
-    attendee: attendee_prop_type,
+    attendee: attendee_prop_type
 };
 
-
-const AttendeeList = (props) => {
+const AttendeeList = props => {
     if (_.isEmpty(props.attendees)) {
         return (
             <h6>
@@ -220,14 +219,11 @@ const AttendeeList = (props) => {
     return (
         <table className="hover">
             <tbody>
-                {_.map(props.attendees, (attendee) => {
+                {_.map(props.attendees, attendee => {
                     return (
                         <tr key={attendee.email} data-email={attendee.email}>
                             <th>
-                                <AttendeeCell
-                                  key={attendee.email}
-                                  attendee={attendee}
-                                />
+                                <AttendeeCell key={attendee.email} attendee={attendee} />
                             </th>
                             <td>
                                 <p className="constrained">
@@ -250,8 +246,7 @@ const AttendeeList = (props) => {
     );
 };
 
-
 AttendeeList.propTypes = {
-    attendees: React.PropTypes.arrayOf(attendee_prop_type),
-    delete_attendee: React.PropTypes.func,
+    attendees: PropTypes.arrayOf(attendee_prop_type),
+    delete_attendee: PropTypes.func
 };

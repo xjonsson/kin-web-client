@@ -4,25 +4,23 @@
  * Apache 2.0 Licensed
  */
 
+import classnames from "classnames";
+import moment from "moment-timezone";
+import PropTypes from 'prop-types';
+import React from "react";
 
-import classnames from 'classnames';
-import moment from 'moment-timezone';
-import React from 'react';
+import { user_config } from "../../utils";
 
-import { user_config } from '../../utils';
-
-
-const TimezoneRow = (props) => {
-    const classes = classnames({
-        active: user_config.timezone === props.timezone,
-    }, 'row');
+const TimezoneRow = props => {
+    const classes = classnames(
+        {
+            active: user_config.timezone === props.timezone
+        },
+        "row"
+    );
     const current_time = moment.tz(props.timezone);
     return (
-        <tr
-          className={classes}
-          data-value={props.timezone}
-          onClick={props.select_timezone}
-        >
+        <tr className={classes} data-value={props.timezone} onClick={props.select_timezone}>
             <th>
                 {current_time.zoneAbbr()}
             </th>
@@ -36,11 +34,9 @@ const TimezoneRow = (props) => {
     );
 };
 
-
 TimezoneRow.propTypes = {
-    timezone: React.PropTypes.string,
-    select_timezone: React.PropTypes.func,
+    timezone: PropTypes.string,
+    select_timezone: PropTypes.func
 };
-
 
 export default TimezoneRow;

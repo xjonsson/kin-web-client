@@ -1,28 +1,26 @@
+import PropTypes from 'prop-types';
 /*!
  * kin
  * Copyright(c) 2016-2017 Benoit Person
  * Apache 2.0 Licensed
  */
 
+import React from "react";
+import { connect } from "react-redux";
+import _ from "lodash";
 
-import React from 'react';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-
-import { toggle_color_picker_tooltip } from '../../../actions/ui';
-import KinTooltip from '../../kin_tooltip';
-import { color_prop_type } from '../../../prop_types';
-
+import { toggle_color_picker_tooltip } from "../../../actions/ui";
+import KinTooltip from "../../kin_tooltip";
+import { color_prop_type } from "../../../prop_types";
 
 const KIN_COLOR = {
-    background: '#EC4956',
-    foreground: '#FFFFFF',
+    background: "#EC4956",
+    foreground: "#FFFFFF"
 };
-
 
 function ColorPickerButton(props) {
     const style = {
-        background: props.color.background,
+        background: props.color.background
     };
     return (
         <button
@@ -34,12 +32,10 @@ function ColorPickerButton(props) {
     );
 }
 
-
 ColorPickerButton.propTypes = {
     color: color_prop_type.isRequired,
-    onClick: React.PropTypes.func,
+    onClick: PropTypes.func
 };
-
 
 class ColorPicker extends React.Component {
     constructor() {
@@ -58,23 +54,27 @@ class ColorPicker extends React.Component {
     }
 
     select_color(react_js_event) {
-        const color = $(react_js_event.target).data('color');
+        const color = $(react_js_event.target).data("color");
         this.props.select_color(color);
     }
 
     render() {
-        const default_color = (
-            _.isUndefined(this.props.default_color)
-                ? KIN_COLOR : this.props.default_color
-        );
-        const target = (this.props.show) ? this._tooltip_target : null;
+        const default_color = _.isUndefined(this.props.default_color)
+            ? KIN_COLOR
+            : this.props.default_color;
+        const target = this.props.show ? this._tooltip_target : null;
 
         return (
-            <div className="color-picker" ref={(ref) => { this._tooltip_target = ref; }}>
+            <div
+              className="color-picker"
+              ref={ref => {
+                  this._tooltip_target = ref;
+              }}
+            >
                 <ColorPickerButton color={default_color} onClick={this._show_tooltip} />
                 <KinTooltip
                   on_close={this._hide_tooltip}
-                  root_classes={['color-picker-tooltip']}
+                  root_classes={["color-picker-tooltip"]}
                   target={target}
                 >
                     {_.map(this.props.colors, (color, color_index) => {
@@ -92,22 +92,19 @@ class ColorPicker extends React.Component {
     }
 }
 
-
 ColorPicker.propTypes = {
-    colors: React.PropTypes.objectOf(color_prop_type),
+    colors: PropTypes.objectOf(color_prop_type),
     default_color: color_prop_type,
-    select_color: React.PropTypes.func.isRequired,
+    select_color: PropTypes.func.isRequired,
 
     // Those come from Redux
-    dispatch: React.PropTypes.func,
-    show: React.PropTypes.bool,
+    dispatch: PropTypes.func,
+    show: PropTypes.bool
 };
-
 
 function map_state_props(state) {
     return state.ui.color_picker_tooltip;
 }
-
 
 const ColorPickerContainer = connect(map_state_props)(ColorPicker);
 export default ColorPickerContainer;

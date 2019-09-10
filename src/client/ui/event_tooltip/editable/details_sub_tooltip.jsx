@@ -1,12 +1,13 @@
+import PropTypes from "prop-types";
 /*!
  * kin
  * Copyright(c) 2016-2017 Benoit Person
  * Apache 2.0 Licensed
  */
 
+import React from "react";
 
-import React from 'react';
-
+const left_chevron = require("../../../../public/imgs/icons/left_chevron.png");
 
 export default class DetailsSubTooltip extends React.Component {
     constructor() {
@@ -27,17 +28,23 @@ export default class DetailsSubTooltip extends React.Component {
         return (
             <div className="details-sub-tooltip">
                 <header>
-                    <h5
-                      className="text-center cursored"
+                    <a
+                      className="text-center"
                       onClick={this.props.toggle_subtooltip}
                       onKeyUp={this._on_key_up}
+                      role="button"
                       tabIndex={0}
                     >
                         <div className="float-left">
-                            <span className="fa fa-chevron-left" />
+                            <img
+                              className="chevron-icon"
+                              src={left_chevron}
+                              alt="Left chevron icon"
+                            />
                         </div>
+
                         {this.props.title}
-                    </h5>
+                    </a>
                 </header>
                 {this.props.children}
             </div>
@@ -45,12 +52,8 @@ export default class DetailsSubTooltip extends React.Component {
     }
 }
 
-
 DetailsSubTooltip.propTypes = {
-    children: React.PropTypes.oneOfType([
-        React.PropTypes.arrayOf(React.PropTypes.node),
-        React.PropTypes.node
-    ]),
-    toggle_subtooltip: React.PropTypes.func,
-    title: React.PropTypes.string,
+    children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]),
+    toggle_subtooltip: PropTypes.func,
+    title: PropTypes.string
 };

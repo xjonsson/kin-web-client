@@ -13,6 +13,10 @@
 
     .tabs-title {
         padding: 0;
+
+        a {
+            outline: none;
+        }
     }
 
     .tabs-panel {
@@ -76,6 +80,14 @@
             & + .provider-logo {
                 opacity: 0.5;
             }
+        }
+
+        .source-row__sub-title {
+            @extend em;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }

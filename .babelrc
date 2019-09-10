@@ -14,4 +14,13 @@
             ],
         },
     },
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "root": ["./src/client"],
+            }
+        ],
+        "transform-class-properties",
+    ]
 }

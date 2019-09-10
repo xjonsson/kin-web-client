@@ -4,20 +4,19 @@
  * Apache 2.0 Licensed
  */
 
+import Fuse from "fuse.js";
+import PropTypes from 'prop-types';
+import React from "react";
+import _ from "lodash";
 
-import Fuse from 'fuse.js';
-import React from 'react';
-import _ from 'lodash';
-
-import TimezoneRow from './timezone_row';
-
+import TimezoneRow from "./timezone_row";
 
 export default class TimezoneAutoCompletor extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            filter: '',
+            filter: ""
         };
         this.filter_timezones = this.filter_timezones.bind(this);
 
@@ -26,7 +25,7 @@ export default class TimezoneAutoCompletor extends React.Component {
             includeScore: false,
             shouldSort: true,
             tokenize: false,
-            threshold: 0.6,
+            threshold: 0.6
         });
     }
 
@@ -41,7 +40,7 @@ export default class TimezoneAutoCompletor extends React.Component {
             <div className="autocompletor-results">
                 <table>
                     <tbody>
-                        {_.map(results, (index) => {
+                        {_.map(results, index => {
                             const timezone = this.props.timezones[index];
                             return (
                                 <TimezoneRow
@@ -60,7 +59,7 @@ export default class TimezoneAutoCompletor extends React.Component {
     filter_timezones() {
         const searched = $(this.filter_input).val();
         this.setState({
-            filter: searched,
+            filter: searched
         });
     }
 
@@ -68,7 +67,9 @@ export default class TimezoneAutoCompletor extends React.Component {
         return (
             <div className="timezone-autocompletor">
                 <input
-                  ref={(ref) => { this.filter_input = ref; }}
+                  ref={ref => {
+                      this.filter_input = ref;
+                  }}
                   type="text"
                   onChange={this.filter_timezones}
                   placeholder="Find more timezones"
@@ -80,6 +81,6 @@ export default class TimezoneAutoCompletor extends React.Component {
 }
 
 TimezoneAutoCompletor.propTypes = {
-    timezones: React.PropTypes.arrayOf(React.PropTypes.string),
-    select_timezone: React.PropTypes.func,
+    timezones: PropTypes.arrayOf(PropTypes.string),
+    select_timezone: PropTypes.func
 };
